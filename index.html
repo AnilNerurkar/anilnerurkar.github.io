@@ -1,119 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <title>Bootstrap Example</title>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1”>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PDX Restaurant</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-</head>
 
+
+
+</head>
 <body>
 
-    <header>
+<div class="container">
+  <div class="jumbotron">
 
-        <!-- Main component for a primary marketing message or call to action -->
+  <h1>My First Bootstrap Page</h1>
+</div>
+<nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                       role="button" aria-haspopup="true" aria-expanded="false">
+                       File Cabinet <span class="caret"></span></a>
+                       <ul class="dropdown-menu">
+                         	<li><a href="#">Patient</a></li>
+                         	<li><a href="#">Drugs</a></li>
+                        	 <li><a href="#">Prescriber</a></li>
+                       </ul>
+       </li>
 
-        <div >
-            <div>
-                <div>
-                    <h1>PDX Restaurant</h1>
-                    <p style="padding:40px;"></p>
-                    <p>We take inspiration from the World's best cuisines, and create a unique fusion experience. Our lipsmacking creations will tickle your culinary senses!</p>
-                </div>
-                <div>
-                </div>
-            </div>
-        </div>
-    </header>
+          <li><a href="#">File Cabinet</a></li>
+          <li><a href="#">Tools</a></li>
+          <li><a href="#">Queues</a></li>
+          <li><a href="#">Application Settings</a></li>
+        </ul>
+      </div>
+    </nav>
 
-    <div>
-        <div>
-            <div>
-                <p style="padding:20px;"></p>
-                <h3 align=center>Our Lipsmacking Culinary Creations</h3>
-            </div>
-            <div>
-                <h2>Uthappizza</h2>
-                <p>A unique combination of Indian Uthappam (pancake) and Italian pizza, topped with Cerignola olives, ripe vine cherry tomatoes, Vidalia onion, Guntur chillies and Buffalo Paneer.</p>
-                <p><a  href="#">More &raquo;</a></p>
-            </div>
-        </div>
-
-
-        <div>
-            <div>
-                <p style="padding:20px;"></p>
-                <h3 align=center>This Month's Promotions</h3>
-            </div>
-            <div>
-                <h2>Weekend Grand Buffet</h2>
-                <p>Featuring mouthwatering combinations with a choice of five different salads, six enticing appetizers, six main entrees and five choicest desserts. Free flowing bubbly and soft drinks. All for just $19.99 per person </p>
-                <p><a href="#">More &raquo;</a></p>
-            </div>
-        </div>
-
-        <div>
-            <div>
-                <p style="padding:20px;"></p>
-                <h3 align=center>Meet our Culinary Specialists</h3>
-            </div>
-            <div>
-                <h2>Gordon Ramsay</h2>
-                <h4>Executive Chef</h4>
-                <p>Award winning five-star Michelin chef with wide International experience having worked closely with whos-who in the culinary world, he specializes in creating mouthwatering Indo-Italian fusion experiences. </p>
-                <p><a href="#">More &raquo;</a></p>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div>
-            <div>
-                <div>
-                    <h5>Links</h5>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Menu</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5>Our Address</h5>
-                    <address>
-		              101 Jim Wright Freeway S.<br>
-		              Suite 200<br>
-		              Fort Worth, TX 76108-2202<br>
-		              Tel.: 800-433-5719<br>
-		              Fax: 	817-246-6760<br>
-		              Email: <a href="mailto:pdxrestaurant@pdxinc.com">pdxrestaurant@pdxinc.com</a>
-		           </address>
-                </div>
-                <div>
-                    <div style="padding: 40px 10px;">
-                        <a href="http://google.com/+">Google+</a>
-                        <a href="http://www.facebook.com/profile.php?id=">Facebook</a>
-                        <a href="http://www.linkedin.com/in/">LinkedIn</a>
-                        <a href="http://twitter.com/">Twitter</a>
-                        <a href="http://youtube.com/">YouTube</a>
-                        <a href="mailto:">Mail</a>
-                    </div>
-                </div>
-                <div>
-                    <p style="padding:10px;"></p>
-                    <p align=center>&copy; Copyright 2016 PDX Restaurant</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual ﬁles  as needed -->
-    <script src="js/bootstrap.min.js"></script>
+<div class="row">
+  <div class="col-sm-1"> Hi </div>
+  <div class="col-sm-11"> Hello </div>
+</div>
 
 </body>
-
 </html>
