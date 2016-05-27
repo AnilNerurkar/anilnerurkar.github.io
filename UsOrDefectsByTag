@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UserStoryPlusDefectsByTag</title>
+	<!-- Author : Anil Nerurkar -->
+	<script type="text/javascript" src="/apps/2.0rc3/sdk.js"></script>
+    <script type="text/javascript">
+      Rally.onReady(function() {
+        Ext.define('Rally.pdx.tagBoard', {
+				extend: 'Rally.app.App', // Rally free App infrastructure
+        componentCls: 'app',
+				top:this,
+				items: [
+						{xtype: 'container',itemId: 'pulldown-container',layout: {type: 'hbox',align: 'stretch',flex : 4}},
+						{xtype: 'container',itemId:'render_example', type: 'hbox', flex: 1}
+					],
+        tagComboBox : void 0,
+
+        launch: function() {	// main in Java
+					this._loadComboBoxes() // Load Iteration Combobox
+        },
+
+				_getTagFilters: function() {
+					var tagFilter = Ext.create('Rally.data.wsapi.Filter', 	{
+							property : "Name",
+							operator : "!=",
+							value : null,
+							root : 'data'
+					});
+					return tagFilter;
+				},
+
+				_loadComboBoxes : function() {
+
+					project = Rally.environment.getContext().getProject();
+
+					var stackOn = "Priority";
+					this.processedJsonDataStore.department.push(this.department);
+					this.processedJsonDataStore.stackOn.push(stackOn);
+					var iterfilters = this._getIterFilters();
+					var rallyIterationDataStore = Ext.create("Rally.data.wsapi.Store",{
+						model: "Iteration",
+						autoLoad: true,
+						filters: this._getIterFilters(),
+						defaultSortDirection : 'DESC'
+					});
+
+          this.iterationComboBox = Ext.create("Rally.ui.combobox.IterationComboBox", {
+						fieldLabel: "Iteration",
+						project: project,
+						labelAlign: "right",
+						width: 300,
+						store: rallyIterationDataStore,
+						margin: '10 10 10 0' ,
+						multiSelect: false,
+						autoExpand: true,
+						showArrows: false,
+                        listeners:{
+                            ready : function(comboBox){
+//								this.down('#barchart-container').removeAll();
+//								this.down('#grid-container').removeAll();
+								this.processedJsonDataStore.selectedIterArray.length = 0;
+								this.processedJsonDataStore.selectedIterArray.push(this.iterationComboBox.getRecord().get('_ref'))
+								this._getSomeStories(this.processedJsonDataStore.selectedIterArray, this.department);
+								//this._loadDefectsData(this.processedJsonDataStore.selectedIterArray, this.department)
+							},
+							select : function(comboBox, records){
+								//console.log("Length of iterations selected = " + records.length);
+
+//								this.down('#barchart-container').removeAll();
+//								this.down('#grid-container').removeAll();
+								this.processedJsonDataStore.selectedIterArray.length = 0;
+								for (var i in records) {
+									//console.log("Iteration = " + records[i]._ref');
+									this.processedJsonDataStore.selectedIterArray.push(records[i].get('_ref'));
+								}
+								this._getSomeStories(this.processedJsonDataStore.selectedIterArray, this.processedJsonDataStore.department[0]);
+								//this._loadDefectsData(this.processedJsonDataStore.selectedIterArray, this.processedJsonDataStore.department[0])
+							}, scope : this
+                        }
+
+                    });
+
+
+
+				},
+				_loadDepartmentComboBox : function() {
+					var departmentStore = Ext.create('Ext.data.Store', {
+						fields: ['rallyFieldName','name'],
+						data : [
+							{ "rallyFieldName" : "c_Developer", "name" : "Dev" },
+							{ "rallyFieldName" : "c_QA" , "name" : "QA" }
+						]
+					});
+					//console.log(" this.logInUserDept = " + this.logInUserDept);
+					if (this.logInUserDept == 'QA') {
+						this.department = "c_QA";
+					} else {
+						this.department = "c_Developer";
+					}
+					this.departmentComboBox =  Ext.create('Rally.ui.combobox.ComboBox', {
+						fieldLabel: 'Department',
+	 					store: departmentStore,
+						listeners:{
+
+                            ready : function(comboBox){
+
+								this.processedJsonDataStore.department.length = 0;
+//								this.down('#barchart-container').removeAll();
+//								this.down('#grid-container').removeAll();
+								this.processedJsonDataStore.department.push(this.department);
+							},
+
+ 							select : function(comboBox, records){
+								this.processedJsonDataStore.department.length = 0;
+//								this.down('#barchart-container').removeAll();
+//								this.down('#grid-container').removeAll();
+								this.processedJsonDataStore.department.push(records[0].get('rallyFieldName'));
+								//this._loadDefectsData(this.processedJsonDataStore.selectedIterArray, this.processedJsonDataStore.department[0])
+							}
+							,scope : this
+                        },
+						allowBlank : false,
+						displayField: 'name',
+						//emptyText : this.logInUserDept,
+						value : this.department,
+						queryMode: 'local',
+						valueField: 'rallyFieldName',
+						labelAlign:"right",
+						width:180,
+						height: 10,
+						margin: '10 10 10 0' ,
+						renderTo: Ext.getBody()
+					})
+										var stackOnStore = Ext.create('Ext.data.Store', {
+						fields: ['name'],
+						data : [
+							{ "name" : "Priority" },
+							{ "name" : "Resolution" }
+						]
+					});
+					this.stackOnComboBox =  Ext.create('Rally.ui.combobox.ComboBox', {
+						fieldLabel: 'Stack On',
+	 					store: stackOnStore,
+						listeners:{
+ 							select : function(comboBox, records){
+								this.processedJsonDataStore.stackOn.length = 0;
+								this.down('#barchart-container').removeAll();
+								this.down('#grid-container').removeAll();
+								this.processedJsonDataStore.stackOn.push(records[0].get('name'));
+								//this._loadDefectsData(this.processedJsonDataStore.selectedIterArray, this.processedJsonDataStore.department[0], records[0].get('name'))
+							}
+							,scope : this
+                        },
+						allowBlank : false,
+						displayField: 'name',
+						emptyText : 'Priority',
+						queryMode: 'local',
+						valueField: 'name',
+						labelAlign:"right",
+						width:220,
+						height: 10,
+						margin: '10 10 10 0' ,
+						renderTo: Ext.getBody()
+					});
+
+					this.down('#pulldown-container').add(this.iterationComboBox)
+					this.down('#pulldown-container').add(this.departmentComboBox)
+					this.down('#pulldown-container').add(this.stackOnComboBox)
+					//this.down('#pulldown-container').add(this.wrappedImage)
+                    //this.add(this.iterationComboBox)
+
+				},
+				_getSomeStories: function(selectedIterations, department, stackOn) {
+						if ( this.render_grid ) { this.render_grid.destroy(); }
+						if ( this.line_grid ) { this.line_grid.destroy(); }
+						var defectsFilters = this._getDefectsFilters(selectedIterations);
+						Ext.create('Rally.data.WsapiDataStore',{
+							autoLoad: true,
+							model: 'Defect',
+							filters: defectsFilters,
+							fetch: ['RevisionHistory','Revisions','FormattedID','Name','RevisionNumber','CreationDate','User'],
+							listeners: {
+								load: function(store,data,success) {
+									this._showRenderedGrid(store);
+									//this._prepareLineByLineGrid(data);
+								},
+								scope: this
+							}
+						});
+					},
+					/* formats data for the revision history cell */
+					_revisionRenderer: function(value,meta,record, rowIndex, colIndex , store , view ) {
+						var deferred = Ext.create('Deft.Deferred');
+						var formatted_value_array = record.get("RevisionArray");
+						if (formatted_value_array) {
+							return formatted_value_array;
+						} else {
+							 return /*Deft.Promise.all( [*/Rally.data.ModelFactory.getModel({
+								type: 'RevisionHistory',
+								scope: this,
+								success: function(model) {
+									model.load(value,
+									{
+										fetch : true,
+										scope: this,
+										callback : function(records,op,success) {
+											records.getCollection('Revisions').load({
+												fetch: true,
+												scope: this,
+												callback: function(records, operation, success) {
+													record.set("RevisionArray", _.map(records,function(r){
+														scope : this;
+														if ( this.department == 'c_QA') {
+															if ((r.get("Description").indexOf("QA changed from")) > -1) {
+																 var startIndex = (r.get("Description").indexOf("QA changed from [")) + 17;
+																 var endIndex = (r.get("Description").indexOf("]", startIndex));
+																 handOverQAname = r.get("Description").substring( startIndex, endIndex);
+																 if (handOverQAname.length > 0) {
+																	return handOverQAname;
+																}
+															}
+														} else {
+															if ((r.get("Description").indexOf("DEVELOPER changed from")) > -1) {
+																 var startIndex = (r.get("Description").indexOf("DEVELOPER changed from [")) + 24;
+																 var endIndex = (r.get("Description").indexOf("]", startIndex));
+																 handOverQAname = r.get("Description").substring( startIndex, endIndex);
+																 if (handOverQAname.length > 0) {
+																	return handOverQAname;
+																}
+															}
+														}
+													}));
+												}
+											});
+										}
+									});
+								}
+							});//]);
+							//return revisionRow;
+							/*
+							revisionRow.done(function(value) {
+								console.log(value);
+								return value;
+							});*/
+							//return ".";
+						}
+						return formatted_value_array.join("<br/>");
+					},
+					_showRenderedGrid: function(store) {
+						if ( this.render_grid ) { this.render_grid.destroy(); }
+						this.render_grid = Ext.create('Rally.ui.grid.Grid',{
+							store: store,
+							columnCfgs: [
+								{ text: 'ID', dataIndex: 'FormattedID' , flex: 1},
+								{ text: 'Name', dataIndex: 'Name' , flex: 3},
+								{ text: 'Revs', dataIndex: 'RevisionHistory', renderer: this._revisionRenderer, flex: 8}
+							]
+						});
+						this.down('#render_example').add(this.render_grid);
+					}
+			});
+
+            Rally.launchApp('Rally.pdx.leaderBoard', {
+              name: "lederBoard"
+            });
+        });
+    </script>
+
+    <style type="text/css">
+
+    </style>
+</head>
+<body></body>
+</html>
